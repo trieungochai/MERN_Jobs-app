@@ -14,7 +14,13 @@ const createJob = async (req, res) => {
 };
 
 const getAllJobs = async (req, res) => {
-  return res.send("getAllJobs");
+  try {
+    const allJobs = await Job.find({ createdBy: req.user.userId });
+    return res.status(StatusCodes.OK).json({ count: allJobs.length, allJobs });
+  } catch (error) {
+    console.log(error);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR);
+  }
 };
 
 const getSingleJob = async (req, res) => {
