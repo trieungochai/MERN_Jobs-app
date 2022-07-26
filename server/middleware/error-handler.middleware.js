@@ -11,6 +11,12 @@ const errorHandlerMiddleware = (error, req, res, next) => {
   // if (error instanceof CustomAPIError) {
   //   return res.status(error.StatusCodes).json({ message: error.message });
   // }
+  if (error.name === "ValidationError") {
+    customError.message = Object.values(error.errors)
+      .map((item) => item.message)
+      .join(", ");
+    customError.statusCode = 400;
+  }
 
   if (error.code && error.code === 11000) {
     customError.message = `Duplicate value entered for ${Object.keys(
