@@ -1,6 +1,7 @@
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const { UnauthenticatedError } = require("../errors");
+const User = require("../models/User.model");
 
 const verifyToken = (req, res, next) => {
   // check header
@@ -13,6 +14,9 @@ const verifyToken = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     // attach the user info to the job routes
+    const user = User.findById(decoded.id).select("-password");
+    req.user = user;
+    
     req.user = { userId: decoded.userId, userName: decoded.userName };
     next();
   } catch (error) {
