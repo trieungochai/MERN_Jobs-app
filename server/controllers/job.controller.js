@@ -24,7 +24,18 @@ const getAllJobs = async (req, res) => {
 };
 
 const getSingleJob = async (req, res) => {
-  return res.send("getSingleJob");
+  try {
+    const { id } = req.params;
+    const { userId } = req.user;
+    const job = await Job.findById({ _id: id, createdBy: userId });
+    if (!job) {
+      throw new NotFoundError(`No job with id ${id}`);
+    }
+    return res.status(StatusCodes.OK).json({ job });
+  } catch (error) {
+    console.log(error);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR);
+  }
 };
 
 const updateJob = async (req, res) => {
